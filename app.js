@@ -2,11 +2,7 @@ const express = require("express");
 const app = express();
 const { sequelize } = require("./config/db");
 const { Sequelize } = require("sequelize");
-const user = require("./db/models/user")(
-  sequelize,
-  Sequelize.DataTypes,
-  Sequelize.Model
-);
+const user = require("./db/models/user")
 
 //regsiter dotenv for environemnt and process.cwd() will return >> current working dirctory path
 require("dotenv").config({ path: `${process.cwd()}/.env` });
@@ -16,7 +12,6 @@ const port = process.env.APP_PORT || 3001;
 const authRouter = require("./routes/auth-route");
 app.use("/api/auth", authRouter);
 app.use(express.json());
-console.log(sequelize,'seq')
 
 app.use(function (req, res, next) {
   res.header("Content-Type", "application/json;charset=UTF-8");
@@ -34,22 +29,18 @@ app.get("/", (req, res) => {
 });
 
 app.post("/user", async (req, res) => {
-  console.log(req.body, "req", user);
-  const newUSer = await user.create(req.body);
-  console.log(newUSer);
-  // try {
-  //   const newUSer = await user.create(req.body);
-  //   console.log(newUSer);
-  //   return res.json({
-  //     statusCode: 200,
-  //     message: "created",
-  //   });
-  // } catch(error) {
-  //   return res.status(400).json({
-  //       statusCode: 400,
-  //       message: error,
-  //     });
-  // }
+  try {
+    const newUSer = await user.create(req.body);
+    return res.status(201).json({
+      statusCode: 201,
+      message: "created",
+    });
+  } catch(error) {
+    return res.status(400).json({
+        statusCode: 400,
+        message: error,
+      });
+  }
 });
 
 //next is a middleware
